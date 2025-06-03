@@ -1,0 +1,10 @@
+venv # Python venv
+
+# don't save actual videos.
+input_videos/*
+!input_videos/.gitkeep
+output_videos/*
+!input_videos/.gitkeep
+
+# env file 
+.env

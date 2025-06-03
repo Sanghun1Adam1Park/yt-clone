@@ -1,0 +1,23 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.env/
+.env.*  # for multiple env variants
+
+# Editor/project files
+*.log
+*.sqlite3
+*.db
+.DS_Store
+.vscode/
+.idea/
+
+# Test & build artifacts
+dist/
+build/
+*.egg-info/
