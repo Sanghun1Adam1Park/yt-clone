@@ -8,21 +8,21 @@ import { useEffect, useState } from "react";
 import { onAuthStateChangedHelper } from "../../firebase/firebase";
 import { User } from "firebase/auth";
 
-// TODO: Understand fr. 
 export default function HeaderBar() {
-  // State - data managed by component that can change over time
+  // `user` stores the currently authenticated Firebase user (or null)
   // setUser - funciton to update the user state.
   const [user, setUser] = useState<User | null>(null);
 
-  useEffect(
-    () => {
+  useEffect(() => {
+      // Use side effect of onAuthStateCHangedHelepr(callback)
       const unsubscribe = onAuthStateChangedHelper(
-        (user) => {setUser(user);}
+        (user) => {setUser(user);} // null menas firebase did not detect any auth user
       );
     
-      return () => unsubscribe();
-    }, []
-  );
+      return () => { 
+        unsubscribe(); // stop using the side effect.
+      }
+  }, []); // Runs once - to set up listner and listner handles effect of state changes. 
 
   return (
     <header className='

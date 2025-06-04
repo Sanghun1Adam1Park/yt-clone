@@ -3,7 +3,7 @@ import { signOut, signInWithGoogle } from '../../firebase/firebase';
 
 interface AppUser {
     /* defining shape of the object */
-    user: User | null;
+    user: User | null; // is a User or null. 
 }
 
 export default function SignIn({user} : AppUser) {
@@ -19,11 +19,11 @@ export default function SignIn({user} : AppUser) {
             hover:bg-[#bee0fd] 
             hover:border-transparent
         ">
-            {user ? (
+            {user ? ( // if user
                 <button onClick={signOut}> 
                     Sign Out
                 </button>
-            ) : (
+            ) : ( // if null
                 <button onClick={signInWithGoogle}>
                     Sign In
                 </button>

@@ -1,6 +1,11 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged, signInWithPopup, User } from "firebase/auth";
-import { GoogleAuthProvider } from "firebase/auth/web-extension";
+import { 
+    getAuth, 
+    onAuthStateChanged, 
+    signInWithPopup, 
+    User,
+    GoogleAuthProvider 
+} from "firebase/auth";
 
 
 // Your web app's Firebase configuration
@@ -34,9 +39,13 @@ export function signOut() {
 }
 
 /**
- * Trigger a callback (function) when user auth state changes.
- * @returns a function that calls the callback every time a change happens.
+ * Subscribes to Firebase Auth state changes and triggers the given callback on each change.
+ * @param callback - A function called with the current user or null on each auth change.
+ * @returns A function to unsubscribe from further auth state updates.
  */
 export function onAuthStateChangedHelper(callback: (user: User | null) => void) {
-    return onAuthStateChanged(auth, callback); // Listenst for changes to the user's sign-in state
+    // Listens for authentication state changes from Firebase Auth as side effect.
+    // Triggers the provided callback with the user or null whenever auth state changes.
+    // Returns an unsubscribe function to stop listening when called.
+    return onAuthStateChanged(auth, callback); 
 }
