@@ -2,11 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import SignIn from "./sign-in";
 
 import { useEffect, useState } from "react";
 import { onAuthStateChangedHelper } from "../../firebase/firebase";
 import { User } from "firebase/auth";
+import UserButton from "./user-button";
 
 export default function HeaderBar() {
   // `user` stores the currently authenticated Firebase user (or null)
@@ -35,7 +35,7 @@ export default function HeaderBar() {
         <Image width={150} height={120}
           src="/yt-clone-logo.svg" alt="YouTube Logo"/>
       </Link>
-      <SignIn user={user} />
+      <UserButton user={user} />
     </header>
   );
 }

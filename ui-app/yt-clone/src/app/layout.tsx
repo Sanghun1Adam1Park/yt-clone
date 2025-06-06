@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Navbar from "./components/headerbar/headerbar";
+import HeaderBar from "./components/headerbar/headerbar";
 
 export const metadata: Metadata = {
   title: "Video platform service clone.",
@@ -16,7 +16,7 @@ export default function RootLayout({
       <body
         className={``}
       >
-        <Navbar />
+        <HeaderBar />
         {children}
       </body>
     </html>

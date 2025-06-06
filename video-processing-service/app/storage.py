@@ -1,7 +1,5 @@
 from google.cloud import storage
-from google.api_core.exceptions import NotFound, Forbidden, GoogleAPIError
 from typing import Final
-from dotenv import load_dotenv
 import os 
 import ffmpeg
 import subprocess
@@ -10,14 +8,12 @@ import logging
 import time 
 import threading
 
-load_dotenv()
-client: Final = storage.Client()
+client: Final = storage.Client() # bucket client object
 
-RAW_BUCKET_NAME: Final = os.getenv("RAW_BUCKET_NAME")
-PROCESSED_BUCKET_NAME: Final = os.getenv("PROCESSED_BUCKET_NAME")
-
-RAW_LOCAL_NAME: Final = os.getenv("RAW_LOCAL_NAME")
-PROCESSED_LOCAL_NAME: Final = os.getenv("PROCESSED_LOCAL_NAME")
+RAW_BUCKET_NAME = "yt-clone-raw-06280527"
+PROCESSED_BUCKET_NAME = "yt-clone-processed-06280527"
+RAW_LOCAL_NAME = "./raw-vids"
+PROCESSED_LOCAL_NAME = "./processed-vids"
 
 def _ensure_dir_exists(dir_path: str):
     """Ensures that given dir exists at given path
@@ -101,12 +97,15 @@ def _upload_blob(filename:str):
     blob.upload_from_filename(os.path.join(PROCESSED_LOCAL_NAME, filename))
     blob.make_public()
 
-async def upload_vid(filename: str):    
+async def upload_vid(filename: str) -> str:    
     """Uploads processed video to the gcloud bucket.
     It starts a thread that downloads which runs in background. 
 
     Args:
         filename (str): name of the processed video
+
+    Returns:
+        str: processed filename
     """
     start = time.time()
     processed_name: str = _file_extension_converter(filename)
@@ -116,6 +115,8 @@ async def upload_vid(filename: str):
     )
     elapsed = time.time() - start
     logging.info(f"Uploaded {processed_name} to {PROCESSED_BUCKET_NAME} from {PROCESSED_LOCAL_NAME} in {elapsed:.2f} seconds.")
+
+    return processed_name
 
 def _delete_file(filename: str):
     """Deletes file at given path.

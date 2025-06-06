@@ -1,10 +1,6 @@
-import { User } from "firebase/auth";
 import { signOut, signInWithGoogle } from '../../firebase/firebase';
+import { AppUser } from "../headerbar/user-button";
 
-interface AppUser {
-    /* defining shape of the object */
-    user: User | null; // is a User or null. 
-}
 
 export default function SignIn({user} : AppUser) {
     return (

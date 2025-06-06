@@ -15,8 +15,16 @@ import {Storage} from "@google-cloud/storage";
 import {onCall} from "firebase-functions/v2/https";
 
 initializeApp();
-
 const firestore = new Firestore(); // FB store object.
+
+export interface Video {
+  id?: string,
+  uid?: string,
+  filename?: string,
+  status?: "processing" | "processed";
+  title?: string,
+  description?: string
+}
 
 // Cloud Function that runs when a new user signs
 // up via Firebase Authentication.
@@ -53,7 +61,7 @@ export const generateUploadUrl = onCall(
 
     const auth = request.auth;
     const data = request.data;
-    const bucket = storage.bucket(functions.config().raw_bucket.name);
+    const bucket = storage.bucket("yt-clone-raw-06280527");
     const filename = `${auth.uid}-${Date.now()}.${data.fileExtension}`;
 
     // Get the url from (upload) bucket
@@ -64,5 +72,17 @@ export const generateUploadUrl = onCall(
     });
 
     return {url, filename};
+  }
+);
+
+export const getVideos = onCall(
+  {
+    region: "europe-west3",
+    maxInstances: 1,
+  },
+  async () => {
+    const snapshot =
+      await firestore.collection("videos").limit(20).get();
+    return snapshot.docs.map((doc) => doc.data());
   }
 );

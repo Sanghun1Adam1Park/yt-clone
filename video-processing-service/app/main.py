@@ -8,6 +8,11 @@ from .storage import (
     delete_raw_vid,
     delete_processed_vid
 )
+from .firestore import (
+    is_new,
+    set_video,
+    Video
+)
 
 import time
 import asyncio
@@ -22,9 +27,8 @@ app = FastAPI()
 @app.post("/process-video")
 async def process_video(req: Request):
     try:
-        body = await req.json()
-
-        start = time.time()
+        # Get the payload
+        body = await req.json() 
         message = body.get("message", {})
         encoded_data = message.get("data")
         if encoded_data is None:
@@ -39,8 +43,19 @@ async def process_video(req: Request):
         except Exception as e:
             raise ValueError(f"Unable to decode base64 or parse JSON: {e}")    
 
+        # Update video status in firestore to avoid itempotency
+        vid_id: str = raw_vid.split('.')[0]; # Since name of vid is: <UID>-<DATE>
+        is_new_vid: bool = await is_new(vid_id)
+        if is_new_vid:
+            await set_video(vid_id, 
+                Video(id=vid_id, uid=vid_id.split('-')[0], status="processing"))
+        else: 
+            raise ValueError("Video already processing or processed.")
+        
+        # Download video from raw bucket
         await download_raw_vid(raw_vid)
-                
+        
+        # Process the video
         process: subprocess.Popen = convert_vid(raw_vid)
         loop = asyncio.get_running_loop()
         convert_start = time.time()
@@ -51,8 +66,13 @@ async def process_video(req: Request):
             logging.error(f"FFmpeg stderr: {stderr.decode('utf-8')}")
             raise RuntimeError(f"FFmpeg failed: {stderr.decode()}")
 
-        await upload_vid(raw_vid)
+        # Uplaod video to processed bucket
+        processed_name: str = await upload_vid(raw_vid)
 
+        await set_video(vid_id, 
+                Video(status="processed", filename=processed_name))
+
+        # Delete local videos since there are no more needs
         loop = asyncio.get_running_loop()
         results = await asyncio.gather(
             loop.run_in_executor(None, delete_raw_vid, raw_vid),
