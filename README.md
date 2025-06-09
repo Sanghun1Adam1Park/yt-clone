@@ -62,4 +62,4 @@ There are several limitations beyond the intentionally excluded UX features (e.g
 For each pub/sub request, it must be awknowledge within 600 seconds. However, the cloud run could take up to 3600 seconds to process the video. In such case, although the video will not be re-uploaded/duplicated using status on firestore, the request itself will be re-tried for next 7 days leaving it un-resovled. 
 
 #### Long-Processing time
-If the video is so large so that it takes more than 10 minutes (3600 seconds) to process, then cloud run will shut down the video-processing container. This results in failed processing and no retry mechanism at the compute level unless explicitly handled.
+If the video is so large so that it takes more than 60 minutes (3600 seconds) to process, then cloud run will shut down the video-processing container. This results in failed processing and no retry mechanism at the compute level unless explicitly handled.
