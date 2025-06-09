@@ -48,7 +48,7 @@ async def process_video(req: Request):
         is_new_vid: bool = await is_new(vid_id)
         if is_new_vid:
             await set_video(vid_id, 
-                Video(id=vid_id, uid=vid_id.split('-')[0], status="processing"))
+                Video(id=vid_id, uid=vid_id.split('-')[0], status="processing")) 
         else: 
             raise ValueError("Video already processing or processed.")
         
