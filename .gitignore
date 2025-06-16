@@ -405,3 +405,5 @@ FodyWeavers.xsd
 venv
 
 utils/
+
+/video-processing-service/app/infos.py

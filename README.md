@@ -50,7 +50,7 @@ Rather than implementing full UX features like subscriptions, comments, or video
 4. Response 
 
 ### Watching a Video  
-![Upload Flowchart](imgs/Watch-video-flowchart.png)
+![Watch Video Flowchart](imgs/Watch-video-flowchart.png)
 
 1. User opens the UI app.
 2. UI app feteches videos via fir
@@ -63,3 +63,17 @@ For each pub/sub request, it must be awknowledge within 600 seconds. However, th
 
 #### Long-Processing time
 If the video is so large so that it takes more than 60 minutes (3600 seconds) to process, then cloud run will shut down the video-processing container. This results in failed processing and no retry mechanism at the compute level unless explicitly handled.
+
+## Fixes
+In this section, we discuss about improvement of system/adding missing components from previous versions.
+
+### Solution to Long-living Pub/Sub messages, Handling long video-process, and Video-process error hanlding.
+
+#### Long living Pub/Sub messages
+The issue with version 1.0 system with Pub/Sub messages was that, if the process was to take longer than 600 seconds which is the maximum wait time for Pub/Sub to recieve `awk` back. In such system, this can happen quite often becasue processing video can take long time (if video is large enough). So, the solution to this problem was to reverse relation between Pub/Sub and Cloud run. Using google scheduler, now the cloud run point checks wether there are pull message in the queue in Pub/sub and can extend the `awk` deadline if needed. 
+
+![Process Worker Flowchart](imgs/Process-worker-flowchart.png)
+
+#### Long video process 
+
+#### Process error handling 
