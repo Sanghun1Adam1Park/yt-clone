@@ -6,15 +6,13 @@ This project replicates a popular video-sharing platform to better understand mi
 ### video processing
 - Cloud Services: Google Cloud (Bucket, Pub/Sub, Cloud Run)
 - Backend: FastAPI (Python)
+    - why? allows concurrent req handling. 
 - Proccessing Logic: FFmpeg 
 
-### Authentication 
-- Auth Provider: Firebase Auth
-- Backend: Node.js (TypeScript)
-
-### Uploading & other API services 
+### Cloud API services & Authentication 
 - Upload Url Provide: Firebase Function, Firestore 
 - Backend: Node.js (TypeScript)
+    - why? because of better SDK support. 
 
 ### UI
 - Next.js (TypeScript)
@@ -74,6 +72,11 @@ The issue with version 1.0 system with Pub/Sub messages was that, if the process
 
 ![Process Worker Flowchart](imgs/Process-worker-flowchart.png)
 
-#### Long video process 
-
 #### Process error handling 
+To ensure that future request for corrupted processing can be handled properly, we just have to make sure that-firestore deletes the docuemt for future re-upload. 
+
+#### Long video process 
+Back to pushing 
+1. bucket creates notifcaiton 
+2. pub/sub pushes message to caller service
+3. caller service calls goolge job 

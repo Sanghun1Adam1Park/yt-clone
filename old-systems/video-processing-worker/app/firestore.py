@@ -35,7 +35,7 @@ async def get_video(video_id: str) -> Optional[Video]:
   else:
     return None
 
-def set_video(videoId: str, video: Video) -> Callable:
+def set_video(video_id: str, video: Video) -> Callable:
   """Either add new snapshot (object) to firestore, 
   or update data. 
 
@@ -47,7 +47,7 @@ def set_video(videoId: str, video: Video) -> Callable:
       Callable: await-able function that uploads snapshot to firestore
   """
   # set() expects dict, and make sure it doesnt include none fields 
-  return db.collection("videos").document(videoId).set(video.dict(exclude_none=True), merge=True)
+  return db.collection("videos").document(video_id).set(video.dict(exclude_none=True), merge=True)
 
 async def is_new(video_id: str) -> bool:
   """Check if the video is new 
@@ -60,3 +60,24 @@ async def is_new(video_id: str) -> bool:
   """
   video = await get_video(video_id)
   return video is None or video.status is None
+
+def delete_video(video_id: str):
+    """
+    Checks if a document exists and deletes it if it does.
+    """
+    try:
+        # 1. Create the reference
+        doc_ref = db.collection("videos").document(video_id)
+
+        # 2. Get the document snapshot
+        doc = await doc_ref.get()
+
+        # 3. Check the .exists property
+        if doc.exist:
+          # 4. Delete the doc.
+          await doc.delete()
+
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+  
