@@ -1,5 +1,5 @@
 import os 
-from .exceptions import * 
+from exceptions import * 
 from google.cloud import storage 
 import ffmpeg 
 
@@ -58,6 +58,22 @@ def upload_video(video_name: str): #IO-bound
     blob.make_public()
   except Exception as e:
     raise UploadVidError(f"Failed to upload video. Reason: {e}")
+
+def delete_video_bucket(video_name: str): #IO-bound
+  """Delete video from the bucket
+
+  Args:
+      video_name (str): name of video to be deleted. 
+
+  Raises:
+      DeleteVidError: if failed to delete the video
+  """
+  try:
+    bucket = client.bucket(RAW_BUCKET_NAME)
+    blob = bucket.blob(video_name)
+    blob.delete()
+  except Exception as e:
+    raise DeleteVidError(f"Failed to delete video. Reason: {e}")
 # ---------- Cloud things ---------- #
 
 # ---------- Processing video ---------- #
@@ -72,7 +88,13 @@ def process_video(video_name: str): #CPU-bound
   """
   try: 
     processed_name = "processed-" + video_name
-    ffmpeg.input(os.path.join(RAW_DIR, video_name)).output(os.path.join(PROCESSED_DIR, processed_name), vf="scale=-2:360")
+    ffmpeg.input(
+      os.path.join(RAW_DIR, video_name)
+    ).output(
+      os.path.join(PROCESSED_DIR, processed_name), vf="scale=-2:360"
+    ).run(
+      capture_stdout=True, capture_stderr=True
+    )
   except Exception as e:
     raise ProcessVidError(f"Failed to process video. Reason: {e}")
 # ---------- Processing video ---------- #

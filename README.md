@@ -80,3 +80,5 @@ Back to pushing
 1. bucket creates notifcaiton 
 2. pub/sub pushes message to caller service
 3. caller service calls goolge job 
+4. now raw bucket is cleaned
+5. plus cdn 

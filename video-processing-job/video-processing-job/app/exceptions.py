@@ -24,3 +24,11 @@ class ProcessVidError(MyException):
 class DeleteVidError(MyException):
   def __init__(self, e: str) -> None:
     super().__init__(e)
+  
+class FSGetError(MyException):
+  def __init__(self, e: str) -> None:
+    super().__init__(e)
+
+class FSSetError(MyException):
+  def __init__(self, e: str) -> None:
+    super().__init__(e)
