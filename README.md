@@ -1,4 +1,4 @@
-# yt-clone
+# vid-sharing-platform-clone
 This project replicates a popular video-sharing platform to better understand microservices, cloud-based environments, and system design. The primary focus is on architectural decisions rather than feature-complete implementation or metric-driven optimization.
 
 ## Tech Stack Overview 
@@ -76,9 +76,15 @@ The issue with version 1.0 system with Pub/Sub messages was that, if the process
 To ensure that future request for corrupted processing can be handled properly, we just have to make sure that-firestore deletes the docuemt for future re-upload. 
 
 #### Long video process 
-Back to pushing 
+As mentitoned previously, if the process is longer than an hour, cloud run terminates the process and deems it as failure. This can be critical for such service, because processing long videos, can take quite some time. 
+
+The solution to this was to bring back push pub/sub message, but with slight twist.
+In this design, cloud run endpoint serves purpose of caller instead of worker and service. The job of cloud run endpoint is to call cloud run job which can handle long process, since it's just calling, it response immediately which then solves both problems: long living http request and hanlding long video porcess. 
+The flow looks like this: 
 1. bucket creates notifcaiton 
 2. pub/sub pushes message to caller service
-3. caller service calls goolge job 
-4. now raw bucket is cleaned
-5. plus cdn 
+3. caller service calls goolge job  
+
+> There is no picture to describe in this section :\
+
+### Other & New issues 
